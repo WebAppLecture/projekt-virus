@@ -1,6 +1,11 @@
 
 import { Data } from "/src/data/data.js";
 
+let data = new Data();
+
+//let deathsUncleaned = data.getDeathsGlobalCovid19Data();
+let deaths = data.columDeathsGlobalCovid19Data();
+console.log(deaths);
 
 
 
