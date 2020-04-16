@@ -1,15 +1,13 @@
-fetch("src/data/data.json")
-    .then(e => e.json())
-    .then(json => {
-        let title = document.createElement("h2"),
-            content = document.createElement("p"),
-            image = document.createElement("img");
 
-        title.innerHTML = json.title;
-        content.innerHTML = json.content;
-        image.setAttribute("src", "./src/images/sql magic.jpg");
+import { Data } from "/src/data/data.js";
 
-        document.body.appendChild(title);
-        document.body.appendChild(content);
-        document.body.appendChild(image);
-    });
+let data = new Data();
+
+//let deathsUncleaned = data.getDeathsGlobalCovid19Data();
+let deaths = data.deathsGlobalCovid19Data();
+let infected = data.infectedGlobalCovid19Data();
+let recovered = data.recoveredCoivd19Data();
+
+
+
+
