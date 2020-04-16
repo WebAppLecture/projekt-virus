@@ -1,8 +1,12 @@
 
 body{
-    font-size: 16px;
+    font-family: serif;
+    background-color: #f2f2f3;
     }
 
+h1 {
+    font-size: 150%;
+}
 text.title{
     font-size: 18px;
     
@@ -13,41 +17,12 @@ text.subTitle{
       font-weight: 500;
       fill: #777777;
     }
+    svg {
+        border: thin dotted darkgrey;
+    }
+    svg.defs-only {
+        display:block; position: absolute; 
+        height:0; width:0; margin: 0; padding: 0; 
+        border: none; overflow: hidden;
+    }
     
-    /*
-    text.caption{
-      font-weight: 400;
-      font-size: 14px;
-      fill: #777777;
-    }
-    text.label{
-      font-weight: 600;
-    }
-  
-    text.valueLabel{
-     font-weight: 300;
-    }
-  
-    text.yearText{
-      font-size: 64px;
-      font-weight: 700;
-      opacity: 0.25;
-    }
-    .tick text {
-      fill: #777777;
-    }
-    .xAxis .tick:nth-child(2) text {
-      text-anchor: start;
-    }
-    .tick line {
-      shape-rendering: CrispEdges;
-      stroke: #dddddd;
-    }
-    .tick line.origin{
-      stroke: #aaaaaa;
-    }
-    path.domain{
-      display: none;
-      
-    }
-    */

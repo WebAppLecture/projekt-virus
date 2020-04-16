@@ -5,9 +5,9 @@ export class Data {
         .then(data => this.sort(data)) 
         .then(data => this.clean(data))
         .then(data => this.visualWorldMap(data))
-        .catch(function(error) {
-            console.log("Had an error loading file.");
-        })
+        //.catch(function(error) {
+          //  console.log("Had an error loading file.");
+        //})
     }
 
     infectedGlobalCovid19Data() {
@@ -31,10 +31,10 @@ export class Data {
 
     //arrange data alphabetically
     sort(data) { //data is now whole data set (->then!)
-        return data.sort(this.compare);
+        return data.sort(this.compareCountry);
     }
 
-    compare(a, b) { 
+    compareCountry(a, b) { 
         let country1 = a['Country/Region'].toUpperCase(); 
         let country2 = b['Country/Region'].toUpperCase();
 
@@ -43,6 +43,19 @@ export class Data {
           comparison = 1;
         } else if (country1 < country2) {
           comparison = -1;
+        }
+        return comparison;
+      }
+
+      compareTotal(a, b) { 
+        let country1 = a['4/15/20']; 
+        let country2 = b['4/15/20'];
+
+        let comparison = 0;
+        if (country1 > country2) {
+          comparison = -1;
+        } else if (country1 < country2) {
+          comparison = 1;
         }
         return comparison;
       }
@@ -64,9 +77,7 @@ export class Data {
         return data;
     }
 
-    visualWorldMap(data) {
-   
-    
+    visualWorldMap(data) { 
     let title = svg.append('text')
      .attr('class', 'title')
      .attr('y', 24) 
@@ -76,7 +87,6 @@ export class Data {
      .attr("class", "subTitle")
      .attr("y", 55) 
      .html("Total deaths");
-     
      
     const chart = svg.append('g')
       .attr('transform', `translate(${margin}, ${margin})`);
@@ -88,49 +98,23 @@ export class Data {
     chart.append('g')
       .call(d3.axisLeft(yScale));
 
-    let countries = [];
-    for(let i = 1; i < data.length; i++) {
-         countries.push(data[i]['Country/Region'])
+    
+    let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
+    let contriesHighestNumberDeaths = []
+    for(let i = 1; i < 9; i++) {
+         contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['Country/Region'])
     }
+    console.log(contriesHighestNumberDeaths)
 
     const xScale = d3.scaleBand()
       .range([0, width])
-      .domain(countries) 
+      .domain(contriesHighestNumberDeaths) 
       .padding(0.2)
 
     chart.append('g')
       .attr('transform', `translate(0, ${height})`)
       .call(d3.axisBottom(xScale));
 
-      /*
-      var svg = d3.select("body").append("svg")
-      .attr("width", 960)
-      .attr("height", 600);
-    
-    var tickDuration = 500;
-    
-    var top_n = 12;
-    var height = 600;
-    var width = 960;
-    
-    const margin = {
-      top: 80,
-      right: 0,
-      bottom: 5,
-      left: 0
-    };
-    let barPadding = (height-(margin.bottom+margin.top))/(top_n*5);
-      
-    let title = svg.append('text')
-     .attr('class', 'title')
-     .attr('y', 24) //?
-     .html('Total Deaths due to Covid19 - GLOBAL');
-  
-     let subTitle = svg.append("text")
-     .attr("class", "subTitle")
-     .attr("y", 55) //?
-     .html("Total deaths");
-     */
 
     }
 }
