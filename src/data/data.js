@@ -1,5 +1,6 @@
 export class Data {
-
+    
+  //TEST
     deathsGlobalCovid19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
         .then(data => this.sort(data)) 
@@ -13,6 +14,7 @@ export class Data {
        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
        .then(data => this.sort(data)) 
        .then(data => this.clean(data))
+      
        //.catch(function(error) {
          //  console.log("Had an error loading file.");
        //})
