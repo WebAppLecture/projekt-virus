@@ -1,3 +1,53 @@
-body {
-    text-align: center;
-}
+
+body{
+    font-size: 16px;
+    }
+
+text.title{
+    font-size: 18px;
+    
+    }
+
+text.subTitle{
+    font-size: 10px;
+      font-weight: 500;
+      fill: #777777;
+    }
+    
+    /*
+    text.caption{
+      font-weight: 400;
+      font-size: 14px;
+      fill: #777777;
+    }
+    text.label{
+      font-weight: 600;
+    }
+  
+    text.valueLabel{
+     font-weight: 300;
+    }
+  
+    text.yearText{
+      font-size: 64px;
+      font-weight: 700;
+      opacity: 0.25;
+    }
+    .tick text {
+      fill: #777777;
+    }
+    .xAxis .tick:nth-child(2) text {
+      text-anchor: start;
+    }
+    .tick line {
+      shape-rendering: CrispEdges;
+      stroke: #dddddd;
+    }
+    .tick line.origin{
+      stroke: #aaaaaa;
+    }
+    path.domain{
+      display: none;
+      
+    }
+    */

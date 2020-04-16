@@ -3,7 +3,15 @@
         <link rel="stylesheet" href="src/css/main.css">
     </head>
     <body>
+        <svg></svg>
     </body>
     <script type="module" src="src/js/index.js"></script>
     <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <script>
+        const margin = 60;
+        const width = 1000 - 2 * margin;
+        const height = 600 - 2 * margin;
+
+        const svg = d3.select('svg');
+    </script>
 </html>
