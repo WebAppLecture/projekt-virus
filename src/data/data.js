@@ -2,11 +2,9 @@ export class Data {
 
    //option1 to get csv data
     columDeathsGlobalCovid19Data() {
-        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv")
+        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
         
-       // .then(function renameHeaders(data) {
-         //   data[0]['Province/State']
-        //})
+        //todo: rename headers
 
         //arrange data alphabetically
         .then(function sortData(data) { //data is now whole data set (->then!)
@@ -22,37 +20,37 @@ export class Data {
                 }
                 return comparison;
               }
-              dataSorted = data.sort(compare);
-              //console.log(data)
-              //console.log(dataSorted)
-              return dataSorted;
+              console.log(data.sort(compare));
+              return data.sort(compare);
         })
 
         //some countries are listed multiple times -> aggregate total numbers
         .then(function cleaning(data) { 
-            
-            for(let i = data.length - 1; i >= 1; i--) {
+            for(let i = data.length - 1; i >= 0; i--) {
                 let j = i - 1;
                 let currentCountry = data[i]['Country/Region']; //todo: rename headers because of frontslash
                 let nextCountry = data[j]['Country/Region'];
-                data[i]['4/14/20'] = parseInt(data[i]['4/14/20'], 10);
-                data[i]['4/14/20'] = parseInt(data[j]['4/14/20'], 10);
+                data[i]["4/15/20"] = parseInt(data[i]["4/15/20"], 10); //todo: how to get last element? So it would update automatically
+                data[j]["4/15/20"] = parseInt(data[j]["4/15/20"], 10);
 
                 if (currentCountry.localeCompare(nextCountry) == 0) { 
                     //console.log(currentCountry);
-                    //console.log(data[j]['4/14/20'])
-                    data[j]['4/14/20'] += data[i]['4/14/20'];
                     //console.log(nextCountry)
+                    //console.log(data[i]['4/14/20'])
+                    //console.log(data[j]['4/14/20'])
+                    data[j]['4/15/20'] += data[i]['4/15/20'];
                     //console.log(data[j]['4/14/20'])
                     data.splice(i, 1);
                 }
             }
-            //console.log(data);
+            console.log(data);
         })
         //.catch(function(error) {
           //  console.log("Had an error loading file.");
         //})
+    
     }
+    
 
     //todo
     getInfectedGlobalCovid19Data() {
@@ -77,18 +75,6 @@ export class Data {
         });
     }
 
-    compare(a, b) { //todo: outsource method
-        let country1 = a.data['Country/Region'];
-        let country2 = b.data['Country/Region'];
-        console.log(country1);
-        console.log(country2)
 
-        let comparison = 0;
-        if (country1 > country2) {
-          comparison = 1;
-        } else if (country1 < country2) {
-          comparison = -1;
-        }
-        return comparison;
-      }
+    
 }
