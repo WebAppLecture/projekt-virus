@@ -1,42 +1,39 @@
 export class Data {
   
+  //get csv data
     deathsGlobalCovid19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
         .then(data => this.sortDatabyCountryNames(data)) 
-        .then(data => this.clean(data))
+        .then(data => this.cleanData(data))
+        .then(data => this.topTenCountriesDeaths(data))
         .then(data => this.visualCountriesWithMaxNumberOfDeaths(data))
-        //.catch(function(error) {
-          //  console.log("Had an error loading file.");
-        //})
+        //.catch(error => this.error())
     }
 
     infectedGlobalCovid19Data() {
        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
        .then(data => this.sortDatabyCountryNames(data)) 
-       .then(data => this.clean(data))
-       .catch(function(error) {
-           console.log("Had an error loading file.");
-       })
+       .then(data => this.cleanData(data))
+       .catch(error => this.error())
    }
 
     recoveredCoivd19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv") 
         .then(data => this.sortDatabyCountryNames(data)) 
-        .then(data => this.clean(data))
-        .catch(function(error) {
-            console.log("Had an error loading file.");
-        })
+        .then(data => this.cleanData(data))
+        .catch(error => this.error())
     }
 
-
-
+    error() {
+      console.log("Had an error loading file.")
+    }
 
     //arrange data alphabetically
     sortDatabyCountryNames(data) { //data is now whole data set (->then!)
-        return data.sort(this.compareCountry);
+        return data.sort(this.compareCountries);
     }
 
-    compareCountry(a, b) { 
+    compareCountries(a, b) { 
         let country1 = a['Country/Region'].toUpperCase(); 
         let country2 = b['Country/Region'].toUpperCase();
 
@@ -49,56 +46,57 @@ export class Data {
         return comparison;
       }
 
-      tenCountriesTotalNumberMaxDeath(data){
-        let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
-        let contriesHighestNumberDeaths = []
-        for(let i = 0; i < 10; i++) {
-             contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['4/15/20'])
-        }
-        return contriesHighestNumberDeaths;
-      }
-  
-      tenCountriesMaxDeath(data) {
-        let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
-        let contriesHighestNumberDeaths = []
-        for(let i = 0; i < 10; i++) {
-             contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['Country/Region'])
-        }
-        return contriesHighestNumberDeaths;
-      }
-
-      compareTotal(a, b) { 
-        let country1 = a['4/15/20']; 
-        let country2 = b['4/15/20'];
-
-        let comparison = 0;
-        if (country1 > country2) {
-          comparison = -1;
-        } else if (country1 < country2) {
-          comparison = 1;
-        }
-        return comparison;
-      }
-
+    
     //some countries are listed multiple times -> aggregate total numbers
-    clean(data) {
+    //keep in mind: just last column is aggregated!
+    cleanData(data) {
+      let header = data['columns'].map(header => header);
+      let lastEntryInHeaders = (header[header.length - 1])
+
         for(let i = data.length - 1; i >= 1; i--) {
             let j = i - 1;
             let currentCountry = data[i]['Country/Region']; 
             let nextCountry = data[j]['Country/Region'];
-            data[i]["4/15/20"] = parseInt(data[i]["4/15/20"], 10); //todo: how to get last element? So it would update automatically
-            data[j]["4/15/20"] = parseInt(data[j]["4/15/20"], 10);
+            
+            data[i][lastEntryInHeaders] = parseInt(data[i][lastEntryInHeaders], 10); 
+            data[j][lastEntryInHeaders] = parseInt(data[j][lastEntryInHeaders], 10);
 
             if (currentCountry.localeCompare(nextCountry) == 0) { 
-                data[j]['4/15/20'] += data[i]['4/15/20'];
+                data[j][lastEntryInHeaders] += data[i][lastEntryInHeaders];
                 data.splice(i, 1);
             }
         }
         return data;
     }
 
+    //extract top ten countries with highest number of deaths
+    topTenCountriesDeaths(data) { //todo
+      let header = data['columns'].map(header => header);
+      let lastEntryInHeaders = (header[header.length - 1])
+    
+      //sort data in descending order of number of deaths
+      let countriesSortedByTotalNumbers = data.sort(compareTotal);
+        function compareTotal(a, b) {
+          let country1 = a[lastEntryInHeaders]; 
+          let country2 = b[lastEntryInHeaders]; 
 
+          let comparison = 0;
+          if (country1 > country2) {
+            comparison = -1;
+          } else if (country1 < country2) {
+            comparison = 1;
+          }
+          return comparison;
+        }
 
+      let topTen = []
+      for(let i = 0; i < 10; i++) {
+        topTen.push(countriesSortedByTotalNumbers[i]) 
+      }
+      //possible with map()?
+      //let testArrayTopTec = countriesSortedByTotalNumbers.map(i => ...)
+      return topTen;
+    }  
 
     visualCountriesWithMaxNumberOfDeaths(data) { 
       const margin = 60;
@@ -113,7 +111,7 @@ export class Data {
        .attr('y', 24) 
        .html('Total Deaths due to Covid19 - GLOBAL');
        
-       //moves the start of the chart to the (60;60) position of SVG
+      //moves the start of the chart to the (60;60) position of SVG
       const chart = svg.append('g')
         .attr('transform', `translate(${margin}, ${margin})`);
       
@@ -139,7 +137,6 @@ export class Data {
         .attr("text-anchor", "middle")
         .attr("transform", "translate("+ (width/2) +","+(height+50)+")")
         .text("Top ten most affected countries");
-    
 
       // text label for the y axis
       chart.append("text")
@@ -147,21 +144,18 @@ export class Data {
         .attr("transform", "translate("+ (-48) +","+(height/2)+")rotate(-90)")
         .text("Deaths");      
 
-      //create rectangles as bars
+      //create rectangles 
       chart.selectAll()
         .data(this.tenCountriesMaxDeath(data))
         .enter()
         .append('rect')
-        .attr('x', xScale(this.tenCountriesMaxDeath(data)))
-        .attr('y', yScale(this.tenCountriesTotalNumberMaxDeath(data)) )
-        .attr('height', height) //todo: Height minus data value
+        .attr('x', (actual, index, array) => index * 88.5)
+        .attr('y',  yScale(this.tenCountriesTotalNumberMaxDeath(data))) //todo
+        .attr('height', (actual, index, array) => height - yScale(this.tenCountriesTotalNumberMaxDeath(data)[index]) ) //todo: Height minus data value
         .attr('width', xScale.bandwidth())
         .attr("fill", "teal")
-  
-        .attr('x', (actual, index, array) =>
-        xScale(this.tenCountriesMaxDeath(data)))
 
-        //create grid system
+      //create grid system
       chart.append('g')
         .attr('class', 'grid')
         .attr('transform', `translate(0, ${height})`)
@@ -177,5 +171,5 @@ export class Data {
         .tickSize(-width, 0, 0)
         .tickFormat(''))
 
-      }     
+      }    
 }
