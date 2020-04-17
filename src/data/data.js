@@ -2,9 +2,9 @@ export class Data {
   
     deathsGlobalCovid19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
-        .then(data => this.sort(data)) 
+        .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.clean(data))
-        .then(data => this.visualWorldMap(data))
+        .then(data => this.visualCountriesWithMaxNumberOfDeaths(data))
         //.catch(function(error) {
           //  console.log("Had an error loading file.");
         //})
@@ -12,9 +12,8 @@ export class Data {
 
     infectedGlobalCovid19Data() {
        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
-       .then(data => this.sort(data)) 
+       .then(data => this.sortDatabyCountryNames(data)) 
        .then(data => this.clean(data))
-      
        .catch(function(error) {
            console.log("Had an error loading file.");
        })
@@ -22,15 +21,18 @@ export class Data {
 
     recoveredCoivd19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv") 
-        .then(data => this.sort(data)) 
+        .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.clean(data))
         .catch(function(error) {
             console.log("Had an error loading file.");
         })
     }
 
+
+
+
     //arrange data alphabetically
-    sort(data) { //data is now whole data set (->then!)
+    sortDatabyCountryNames(data) { //data is now whole data set (->then!)
         return data.sort(this.compareCountry);
     }
 
@@ -45,6 +47,24 @@ export class Data {
           comparison = -1;
         }
         return comparison;
+      }
+
+      tenCountriesTotalNumberMaxDeath(data){
+        let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
+        let contriesHighestNumberDeaths = []
+        for(let i = 0; i < 10; i++) {
+             contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['4/15/20'])
+        }
+        return contriesHighestNumberDeaths;
+      }
+  
+      tenCountriesMaxDeath(data) {
+        let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
+        let contriesHighestNumberDeaths = []
+        for(let i = 0; i < 10; i++) {
+             contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['Country/Region'])
+        }
+        return contriesHighestNumberDeaths;
       }
 
       compareTotal(a, b) { 
@@ -77,44 +97,85 @@ export class Data {
         return data;
     }
 
-    visualWorldMap(data) { 
-    let title = svg.append('text')
-     .attr('class', 'title')
-     .attr('y', 24) 
-     .html('Total Deaths due to Covid19 - GLOBAL');
 
-     let subTitle = svg.append("text")
-     .attr("class", "subTitle")
-     .attr("y", 55) 
-     .html("Total deaths");
-     
-    const chart = svg.append('g')
-      .attr('transform', `translate(${margin}, ${margin})`);
+
+
+    visualCountriesWithMaxNumberOfDeaths(data) { 
+      const margin = 60;
+      const width = 1000 - 2 * margin; //width of svg
+      const height = 600 - 2 * margin; //height of svg
+      const padding = 10;
       
-    const yScale = d3.scaleLinear()
-      .range([height, 0])
-      .domain([0, 20000]);
-
-    chart.append('g')
-      .call(d3.axisLeft(yScale));
-
+      const svg = d3.select('svg');
+      
+      let title = svg.append('text')
+       .attr('class', 'title')
+       .attr('y', 24) 
+       .html('Total Deaths due to Covid19 - GLOBAL');
+       
+       //moves the start of the chart to the (60;60) position of SVG
+      const chart = svg.append('g')
+        .attr('transform', `translate(${margin}, ${margin})`);
+      
+      //create x- and y-axes
+      const yScale = d3.scaleLinear()
+        .range([height, padding]) //svg element starts in up left corner
+        .domain([0, 30000]); 
+  
+      chart.append('g')
+        .call(d3.axisLeft(yScale));
+  
+      const xScale = d3.scaleBand()
+        .range([0, width])
+        .domain(this.tenCountriesMaxDeath(data)) 
+        .padding(0.2)
+  
+      chart.append('g')
+        .attr('transform', `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale));
+      
+      //add text label of x axis
+      chart.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate("+ (width/2) +","+(height+50)+")")
+        .text("Top ten most affected countries");
     
-    let countriesSortedByTotalNumbers = data.sort(this.compareTotal)
-    let contriesHighestNumberDeaths = []
-    for(let i = 1; i < 9; i++) {
-         contriesHighestNumberDeaths.push(countriesSortedByTotalNumbers[i]['Country/Region'])
-    }
-    console.log(contriesHighestNumberDeaths)
 
-    const xScale = d3.scaleBand()
-      .range([0, width])
-      .domain(contriesHighestNumberDeaths) 
-      .padding(0.2)
+      // text label for the y axis
+      chart.append("text")
+        .style("text-anchor", "middle")
+        .attr("transform", "translate("+ (-48) +","+(height/2)+")rotate(-90)")
+        .text("Deaths");      
 
-    chart.append('g')
-      .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale));
+      //create rectangles as bars
+      chart.selectAll()
+        .data(this.tenCountriesMaxDeath(data))
+        .enter()
+        .append('rect')
+        .attr('x', xScale(this.tenCountriesMaxDeath(data)))
+        .attr('y', yScale(this.tenCountriesTotalNumberMaxDeath(data)) )
+        .attr('height', height) //todo: Height minus data value
+        .attr('width', xScale.bandwidth())
+        .attr("fill", "teal")
+  
+        .attr('x', (actual, index, array) =>
+        xScale(this.tenCountriesMaxDeath(data)))
 
+        //create grid system
+      chart.append('g')
+        .attr('class', 'grid')
+        .attr('transform', `translate(0, ${height})`)
+        .call(d3.axisBottom()
+        .scale(xScale)
+        .tickSize(-height, 0, 0)
+        .tickFormat(''))
 
-    }
+      chart.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft()
+        .scale(yScale)
+        .tickSize(-width, 0, 0)
+        .tickFormat(''))
+
+      }     
 }
