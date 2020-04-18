@@ -71,7 +71,11 @@ export class Data {
 
     //extract top ten countries with highest number of deaths
     topTenCountriesDeaths(data) { //todo
-      let header = data['columns'].map(header => header);
+      let header = data['columns'].map((header) => header);
+      //let header = data.map(header => data['columns']); Gibt jetzt für jedes Arrayobjekt die headers aus. Soll aber nur EINMAL headers ausgeben
+      let headertest =  data.map(header => data['columns'])
+      console.log(header)
+      console.log(headertest)
       let lastEntryInHeaders = (header[header.length - 1])
     
       //sort data in descending order of number of deaths
@@ -103,6 +107,7 @@ export class Data {
       const width = 1000 - 2 * margin; //width of svg
       const height = 600 - 2 * margin; //height of svg
       const padding = 10;
+      let countrynames = data.map(countryname =>  countryname['Country/Region'])
       
       const svg = d3.select('svg');
       
@@ -117,7 +122,7 @@ export class Data {
       
       //create x- and y-axes
       const yScale = d3.scaleLinear()
-        .range([height, padding]) //svg element starts in up left corner
+        .range([height, 0]) //svg element starts in up left corner
         .domain([0, 30000]); 
   
       chart.append('g')
@@ -125,7 +130,8 @@ export class Data {
   
       const xScale = d3.scaleBand()
         .range([0, width])
-        .domain(this.tenCountriesMaxDeath(data)) 
+        .domain(countrynames) //why not possible to define countrynames in .domain() with map()Function?
+        //we take an intervall (called domain by d3.js) and transform it to a new intervall (call range by d3.js)
         .padding(0.2)
   
       chart.append('g')
@@ -146,7 +152,7 @@ export class Data {
 
       //create rectangles 
       chart.selectAll()
-        .data(this.tenCountriesMaxDeath(data))
+        .data(this.topTenCountriesDeaths(data))
         .enter()
         .append('rect')
         .attr('x', (actual, index, array) => index * 88.5)
