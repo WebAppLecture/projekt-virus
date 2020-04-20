@@ -70,12 +70,8 @@ export class Data {
     }
 
     //extract top ten countries with highest number of deaths
-    topTenCountriesDeaths(data) { //todo
+    topTenCountriesDeaths(data) { 
       let header = data['columns'].map((header) => header);
-      //let header = data.map(header => data['columns']); Gibt jetzt für jedes Arrayobjekt die headers aus. Soll aber nur EINMAL headers ausgeben
-      let headertest =  data.map(header => data['columns'])
-      console.log(header)
-      console.log(headertest)
       let lastEntryInHeaders = (header[header.length - 1])
     
       //sort data in descending order of number of deaths
@@ -92,22 +88,29 @@ export class Data {
           }
           return comparison;
         }
-
-      let topTen = []
-      for(let i = 0; i < 10; i++) {
-        topTen.push(countriesSortedByTotalNumbers[i]) 
-      }
-      //possible with map()?
-      //let testArrayTopTec = countriesSortedByTotalNumbers.map(i => ...)
-      return topTen;
+      return countriesSortedByTotalNumbers.slice(0, 10)
     }  
 
-    visualCountriesWithMaxNumberOfDeaths(data) { 
+    visualCountriesWithMaxNumberOfDeaths(data) {
+      console.log(data)
+      //create date-variable; necessary because column variable is not included anymore
+      const today = new Date()
+      const yesterday = new Date(today)
+      yesterday.setDate(yesterday.getDate() - 1)
+      let formattedDate = (yesterday.getMonth() + 1) + "/" + ((yesterday.getDate()) + "/" + yesterday.getFullYear().toString().substring(2))
+      if(data[0][formattedDate] == undefined) {
+        yesterday.setDate(yesterday.getDate() - 1)
+        console.log("yesterday not found. Taking the day before yesterday")
+        if(data[0][formattedDate] == undefined) {
+          console.log("ERROR: COULD NOT FOUND DATA OF YESTERDAY AND THE DAY BEFORE")
+        }
+      }
+
       const margin = 60;
       const width = 1000 - 2 * margin; //width of svg
       const height = 600 - 2 * margin; //height of svg
-      const padding = 10;
-      let countrynames = data.map(countryname =>  countryname['Country/Region'])
+      let countrynames = data.map(countryname =>  countryname['Country/Region']) 
+      
       
       const svg = d3.select('svg');
       
@@ -120,18 +123,20 @@ export class Data {
       const chart = svg.append('g')
         .attr('transform', `translate(${margin}, ${margin})`);
       
-      //create x- and y-axes
-      const yScale = d3.scaleLinear()
-        .range([height, 0]) //svg element starts in up left corner
-        .domain([0, 30000]); 
+      //create y-axe
+      const yScale = d3.scaleLinear() //scalingfunction splits height in equal parts
+        .range([height, 0]) //.range takes the length
+        //remember: svg element starts in up left corner
+        .domain([0, 50000]); //.domain takes the range --> length will be divided between limits of range
   
-      chart.append('g')
-        .call(d3.axisLeft(yScale));
+        chart.append('g')
+        .call(d3.axisLeft(yScale)); //d3.axisLeft creates left vertical axis
   
+      //create x-axe
       const xScale = d3.scaleBand()
         .range([0, width])
-        .domain(countrynames) //why not possible to define countrynames in .domain() with map()Function?
-        //we take an intervall (called domain by d3.js) and transform it to a new intervall (call range by d3.js)
+        .domain(countrynames) //why is not possible to define countrynames in .domain() with map()Function?
+        //.domain -> we take an intervall (called domain by d3.js) and transform it to a new intervall (call range by d3.js)
         .padding(0.2)
   
       chart.append('g')
@@ -147,19 +152,21 @@ export class Data {
       // text label for the y axis
       chart.append("text")
         .style("text-anchor", "middle")
-        .attr("transform", "translate("+ (-48) +","+(height/2)+")rotate(-90)")
+        .attr("transform", "translate("+ (-47) +","+(height/2)+")rotate(-90)")
         .text("Deaths");      
 
       //create rectangles 
-      chart.selectAll()
-        .data(this.topTenCountriesDeaths(data))
-        .enter()
-        .append('rect')
-        .attr('x', (actual, index, array) => index * 88.5)
-        .attr('y',  yScale(this.tenCountriesTotalNumberMaxDeath(data))) //todo
-        .attr('height', (actual, index, array) => height - yScale(this.tenCountriesTotalNumberMaxDeath(data)[index]) ) //todo: Height minus data value
-        .attr('width', xScale.bandwidth())
+      chart.selectAll() //select all element on the chart with empty result set
+        .data(data) //.data defines how many DOM elements. Defines through array-length
+        .enter() //identifies elements that are missing if input is longer than selection
+        .append('rect') //append a rectangle for every member of the array
+        .attr('x', function(d,i) { return xScale(data[i]['Country/Region'])} ) //done
+        .attr('y', function(d,i) { return yScale(data[i][formattedDate])}) //done
+        .attr('width', xScale.bandwidth())//(width / data.length) /2)
+        .attr('height', function(d, i) { return height - yScale(data[i][formattedDate])})
         .attr("fill", "teal")
+        .on("mouseover", onMouseOver) //Add listener for the mouse event
+        .on("mouseout", onMouseOut) 
 
       //create grid system
       chart.append('g')
@@ -177,5 +184,44 @@ export class Data {
         .tickSize(-width, 0, 0)
         .tickFormat(''))
 
-      }    
+        //eventlistener
+        function onMouseOver(d, i) {
+          d3.select(this).attr('class', 'highlight');
+          d3.select(this)
+            .transition() //adds animation
+            .duration(400)
+            .attr('width', xScale.bandwidth() + 5)
+            .attr("y", function(d) { return yScale(data[i][formattedDate])})
+            .attr("height", function(d) { return height - yScale(data[i][formattedDate] + 10 )} )
+
+          chart.append("text")
+            .attr('class', 'val') 
+            .attr('x', function() {
+                return xScale(data[i]['Country/Region']);
+            })
+         .attr('y', function() {
+             return yScale(data[i][formattedDate]) + 30;
+         })
+         .text(function() {
+             return [data[i][formattedDate].toString() ]; //value of the text 
+         });
+    }
+
+    //mouseout event handler function
+    function onMouseOut(d, i) {
+      // use the text label class to remove label on mouseout
+      d3.select(this).attr('class', 'bar');
+      d3.select(this)
+        .transition() 
+        .duration(400)
+        .attr('width', xScale.bandwidth())
+        .attr("y", function(d) { return yScale(data[i][formattedDate]); })
+        .attr("height", function(d) { return height - yScale(data[i][formattedDate]); });
+
+      d3.selectAll('.val')
+        .remove()
+  }
+        return data; 
+      }   
+      
 }
