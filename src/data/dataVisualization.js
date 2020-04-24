@@ -71,7 +71,7 @@ export class Data {
 
     //extract top ten countries with highest number of deaths
     topTenCountriesDeaths(data) { 
-      let header = data['columns'].map((header) => header);
+      let header = data['columns'].map(header => header);
       let lastEntryInHeaders = (header[header.length - 1])
     
       //sort data in descending order of number of deaths
@@ -91,8 +91,9 @@ export class Data {
       return countriesSortedByTotalNumbers.slice(0, 10)
     }  
 
+    //Guided by https://blog.risingstack.com/d3-js-tutorial-bar-charts-with-javascript/ 
     visualCountriesWithMaxNumberOfDeaths(data) {
-      console.log(data)
+      
       //create date-variable; necessary because column variable is not included anymore
       const today = new Date()
       const yesterday = new Date(today)
@@ -106,30 +107,30 @@ export class Data {
         }
       }
 
-      const margin = 60;
+      const margin = 80;
       const width = 1000 - 2 * margin; //width of svg
       const height = 600 - 2 * margin; //height of svg
       let countrynames = data.map(countryname =>  countryname['Country/Region']) 
-      
       
       const svg = d3.select('svg');
       
       let title = svg.append('text')
        .attr('class', 'title')
-       .attr('y', 24) 
-       .html('Total Deaths due to Covid19 - GLOBAL');
+       .attr('y', 30) 
+       .attr('x', 35)
+       .html('Top ten most affected countries');
        
-      //moves the start of the chart to the (60;60) position of SVG
+      //creates the chart-variable and moves the start of the chart to the (60;60) -> position of SVG
       const chart = svg.append('g')
         .attr('transform', `translate(${margin}, ${margin})`);
       
       //create y-axe
       const yScale = d3.scaleLinear() //scalingfunction splits height in equal parts
         .range([height, 0]) //.range takes the length
-        //remember: svg element starts in up left corner
-        .domain([0, 50000]); //.domain takes the range --> length will be divided between limits of range
+        .domain([0, 60000]); //.domain takes the range --> length will be divided between limits of range
   
         chart.append('g')
+        .attr('class', 'axes')
         .call(d3.axisLeft(yScale)); //d3.axisLeft creates left vertical axis
   
       //create x-axe
@@ -140,31 +141,33 @@ export class Data {
         .padding(0.2)
   
       chart.append('g')
+        .attr('class', 'axes')
         .attr('transform', `translate(0, ${height})`)
         .call(d3.axisBottom(xScale));
       
-      //add text label of x axis
+      // text label of x axis
       chart.append("text")
+        .attr('class', 'axisLabel')
         .attr("text-anchor", "middle")
         .attr("transform", "translate("+ (width/2) +","+(height+50)+")")
-        .text("Top ten most affected countries");
+        .text("Countries");
 
       // text label for the y axis
       chart.append("text")
-        .style("text-anchor", "middle")
-        .attr("transform", "translate("+ (-47) +","+(height/2)+")rotate(-90)")
-        .text("Deaths");      
+        .attr('class', 'axisLabel')
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate("+ (-57) +","+(height/2)+")rotate(-90)")
+        .text("Total Deaths");      
 
       //create rectangles 
       chart.selectAll() //select all element on the chart with empty result set
         .data(data) //.data defines how many DOM elements. Defines through array-length
         .enter() //identifies elements that are missing if input is longer than selection
         .append('rect') //append a rectangle for every member of the array
-        .attr('x', function(d,i) { return xScale(data[i]['Country/Region'])} ) //done
-        .attr('y', function(d,i) { return yScale(data[i][formattedDate])}) //done
+        .attr('x', (d,i) => xScale(data[i]['Country/Region']) ) //done
+        .attr('y', (d,i) => yScale(data[i][formattedDate])) //done
         .attr('width', xScale.bandwidth())//(width / data.length) /2)
-        .attr('height', function(d, i) { return height - yScale(data[i][formattedDate])})
-        .attr("fill", "teal")
+        .attr('height', (d, i) =>  height - yScale(data[i][formattedDate]))
         .on("mouseover", onMouseOver) //Add listener for the mouse event
         .on("mouseout", onMouseOut) 
 
@@ -184,30 +187,31 @@ export class Data {
         .tickSize(-width, 0, 0)
         .tickFormat(''))
 
-        //eventlistener
-        function onMouseOver(d, i) {
-          d3.select(this).attr('class', 'highlight');
-          d3.select(this)
-            .transition() //adds animation
-            .duration(400)
-            .attr('width', xScale.bandwidth() + 5)
-            .attr("y", function(d) { return yScale(data[i][formattedDate])})
-            .attr("height", function(d) { return height - yScale(data[i][formattedDate] + 10 )} )
+      chart.append('text')
+        .attr('class', 'date')
+        .attr('x', 800)
+        .attr('y', 510)
+        .text("Database updated: " + formattedDate);
 
+      //mouseout event handler function
+      //color bar for onMouseOver-Event
+      function onMouseOver(d, i) {
+        d3.select(this).attr('class', 'highlight');
+        d3.select(this)
+          .transition() //adds animation
+          .duration(400)
+          .attr('width', xScale.bandwidth() + 5)
+          .attr("y", y => yScale(data[i][formattedDate]))
+          .attr("height", h => height - yScale(data[i][formattedDate] + 10 ))
+
+          //add text of total numbers for onMouseOver-Event
           chart.append("text")
             .attr('class', 'val') 
-            .attr('x', function() {
-                return xScale(data[i]['Country/Region']);
-            })
-         .attr('y', function() {
-             return yScale(data[i][formattedDate]) + 30;
-         })
-         .text(function() {
-             return [data[i][formattedDate].toString() ]; //value of the text 
-         });
+            .attr('x', x => xScale(data[i]['Country/Region']) + 17)
+            .attr('y', y => yScale(data[i][formattedDate]) + 23 )
+            .text([data[i][formattedDate].toString()]); // value of text in bar -> total Numbers for country
     }
 
-    //mouseout event handler function
     function onMouseOut(d, i) {
       // use the text label class to remove label on mouseout
       d3.select(this).attr('class', 'bar');
@@ -215,8 +219,9 @@ export class Data {
         .transition() 
         .duration(400)
         .attr('width', xScale.bandwidth())
-        .attr("y", function(d) { return yScale(data[i][formattedDate]); })
-        .attr("height", function(d) { return height - yScale(data[i][formattedDate]); });
+        .attr("text-anchor", "middle")
+        .attr("y", y => yScale(data[i][formattedDate]))
+        .attr("height", h => height - yScale(data[i][formattedDate]));
 
       d3.selectAll('.val')
         .remove()
