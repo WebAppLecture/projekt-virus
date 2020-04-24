@@ -225,8 +225,14 @@ export class Data {
 
       d3.selectAll('.val')
         .remove()
-  }
-        return data; 
-      }   
-      
+      }
+    return data; 
+    }  
+
+    clearChart() {
+      d3.select("svg")
+      .select("g")
+      .selectAll("*")
+      .remove();
+    } 
 }
