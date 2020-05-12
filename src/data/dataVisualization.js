@@ -1,28 +1,36 @@
-export class Data {
-  
+export class Data{
+
   //get csv data
     deathsGlobalCovid19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
+        //.then(data => this.clearChart(data))
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
         .then(data => this.topTenCountriesDeaths(data))
-        .then(data => this.visualCountriesWithMaxNumberOfDeaths(data))
+        .then((data, type = "DEATHS") => this.visualData(data, type))
         //.catch(error => this.error())
     }
 
     infectedGlobalCovid19Data() {
        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+       //.then(data => this.clearChart(data))
        .then(data => this.sortDatabyCountryNames(data)) 
        .then(data => this.cleanData(data))
-       .catch(error => this.error())
+       .then(data => this.topTenCountriesDeaths(data))
+       .then((data, type = "INFECTED") => this.visualData(data, type))
+       //.catch(error => this.error())
    }
 
     recoveredCoivd19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv") 
+        //.then(data => this.clearChart(data))
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
-        .catch(error => this.error())
+        .then(data => this.topTenCountriesDeaths(data))
+        .then((data, type = "RECOVERED") => this.visualData(data, type))
+        //.catch(error => this.error())
     }
+
 
     error() {
       console.log("Had an error loading file.")
@@ -90,9 +98,16 @@ export class Data {
         }
       return countriesSortedByTotalNumbers.slice(0, 10)
     }  
+    
 
     //Guided by https://blog.risingstack.com/d3-js-tutorial-bar-charts-with-javascript/ 
-    visualCountriesWithMaxNumberOfDeaths(data) {
+    visualData(data, datatype) {
+
+      d3.selectAll("svg")
+      .selectAll("g")
+      //.selectAll("text")
+      .remove();
+
       
       //create date-variable; necessary because column variable is not included anymore
       const today = new Date()
@@ -108,26 +123,27 @@ export class Data {
       }
 
       const margin = 80;
-      const width = 1000 - 2 * margin; //width of svg
-      const height = 600 - 2 * margin; //height of svg
+      const width = 1000 - 2 * margin; 
+      const height = 600 - 2 * margin; 
       let countrynames = data.map(countryname =>  countryname['Country/Region']) 
       
       const svg = d3.select('svg');
-      
-      let title = svg.append('text')
-       .attr('class', 'title')
-       .attr('y', 30) 
-       .attr('x', 35)
-       .html('Top ten most affected countries');
        
-      //creates the chart-variable and moves the start of the chart to the (60;60) -> position of SVG
+      //creates the chart-variable
       const chart = svg.append('g')
         .attr('transform', `translate(${margin}, ${margin})`);
       
+      //define title
+      chart.append('text')
+        .attr('class', 'title')
+        .attr('y', -35) 
+        .attr('x', -35)
+        .text("Top ten most affected countries - " + datatype);
+
       //create y-axe
       const yScale = d3.scaleLinear() //scalingfunction splits height in equal parts
         .range([height, 0]) //.range takes the length
-        .domain([0, 60000]); //.domain takes the range --> length will be divided between limits of range
+        .domain([0, data[0][formattedDate] + 11000]); //.domain takes the range --> length will be divided between limits of range
   
         chart.append('g')
         .attr('class', 'axes')
@@ -157,7 +173,7 @@ export class Data {
         .attr('class', 'axisLabel')
         .attr("text-anchor", "middle")
         .attr("transform", "translate("+ (-57) +","+(height/2)+")rotate(-90)")
-        .text("Total Deaths");      
+        .text("Total " + datatype[0] + datatype.substring(1,datatype.length).toLowerCase());      
 
       //create rectangles 
       chart.selectAll() //select all element on the chart with empty result set
@@ -196,6 +212,7 @@ export class Data {
       //mouseout event handler function
       //color bar for onMouseOver-Event
       function onMouseOver(d, i) {
+        data[i]['Country/Region'].toString().length
         d3.select(this).attr('class', 'highlight');
         d3.select(this)
           .transition() //adds animation
@@ -207,7 +224,8 @@ export class Data {
           //add text of total numbers for onMouseOver-Event
           chart.append("text")
             .attr('class', 'val') 
-            .attr('x', x => xScale(data[i]['Country/Region']) + 17)
+            .attr('x', x => xScale(data[i]['Country/Region']) + (xScale.bandwidth() + 5) / 2)
+            .attr("text-anchor", "middle")
             .attr('y', y => yScale(data[i][formattedDate]) + 23 )
             .text([data[i][formattedDate].toString()]); // value of text in bar -> total Numbers for country
     }
@@ -227,12 +245,7 @@ export class Data {
         .remove()
       }
     return data; 
-    }  
-
-    clearChart() {
-      d3.select("svg")
-      .select("g")
-      .selectAll("*")
-      .remove();
     } 
-}
+    
+  }
+
