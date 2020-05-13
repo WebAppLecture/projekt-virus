@@ -1,3 +1,88 @@
-body {
+body{
+background: linear-gradient( rgba(149,149,154,1) 0%, rgba(236,236,241,1) 45%, rgb(124, 177, 177) 100%);
+    }
+
+h1 {
+    font-family: 'Trocchi';
+    color: rgb(11, 59, 53);
+    font-size: 35px; 
     text-align: center;
+    font-weight: normal;
+    vertical-align: middle;
+    border: medium dotted;
 }
+
+.coronavirus-icon {
+    position: relative;
+    font-size: 35px;
+    left: 55%;
+    top: -17%;
+    width: 683px;
+    height: 683;
+    background-image: url('bakterien.svg');
+    opacity: 0.3;
+    z-index: -1;
+}
+
+svg {
+    position: absolute;
+    width: 1000px;
+    height: 600px;
+    left: 15%;
+    top: 15%;
+    border: thin dotted darkgrey;
+    fill: teal;
+}
+
+    .title {
+        fill:black;
+        font-size: 15pt;
+    }
+    
+    .grid line {
+        stroke: rgba(28, 35, 39, 0.74);
+        stroke-opacity: 0.2;
+        pointer-events: none;
+    }
+
+    .axisLabel {
+        fill: black;
+    }
+
+    .highlight {
+        fill: rgb(92, 13, 68); 
+    }
+
+    .val {
+        fill: white;
+        pointer-events: none;
+        text-align: center;
+    }
+
+    .date {
+        fill: black;
+        font-size: 8pt;
+    }
+
+    .deaths {
+            left: 80%;
+            margin-top: 2vh;
+        }
+        
+    .recovered {
+            left: 62%;
+            margin-top: 8vh;
+        }
+
+   .data-change-buttons  {
+    position: relative;
+    left: 70%;
+    top: -1%; 
+    bottom: -4%;
+    z-index: 2;
+}
+ 
+
+
+
+    
