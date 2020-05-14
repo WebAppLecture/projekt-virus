@@ -1,36 +1,41 @@
-body{
-background: linear-gradient( rgba(149,149,154,1) 0%, rgba(236,236,241,1) 45%, rgb(124, 177, 177) 100%);
-    }
+* {
+    box-sizing: border-box;
+  }
+
+[class*="col-"] {
+    float: left;
+    padding: 15px;
+}
+
+.col-1 {width: 12.5%;
+    border: 1px solid red;}
+.col-2 {width: 50%;
+    border: 1px solid red;}
+.col-3 {width: 35%;
+    border: 1px solid red;}
 
 h1 {
     font-family: 'Trocchi';
     color: rgb(11, 59, 53);
     font-size: 35px; 
+    padding: 5px;
     text-align: center;
     font-weight: normal;
     vertical-align: middle;
     border: medium dotted;
 }
 
-.coronavirus-icon {
-    position: relative;
-    font-size: 35px;
-    left: 55%;
-    top: -17%;
-    width: 683px;
-    height: 683;
-    background-image: url('bakterien.svg');
-    opacity: 0.3;
-    z-index: -1;
+body{
+background: linear-gradient( rgb(149,149,154) 0%, rgb(236,236,241) 45%, rgb(124, 177, 177) 100%);
 }
 
-svg {
-    position: absolute;
+.barchart {
     width: 1000px;
     height: 600px;
+    /*
     left: 15%;
-    top: 15%;
-    border: thin dotted darkgrey;
+    top: 15%;*/
+    border: thin dotted rgb(141, 139, 139);
     fill: teal;
 }
 
@@ -41,7 +46,7 @@ svg {
     
     .grid line {
         stroke: rgba(28, 35, 39, 0.74);
-        stroke-opacity: 0.2;
+        stroke-opacity: 0.3;
         pointer-events: none;
     }
 
@@ -64,24 +69,73 @@ svg {
         font-size: 8pt;
     }
 
-    .deaths {
-            left: 80%;
-            margin-top: 2vh;
-        }
-        
-    .recovered {
-            left: 62%;
-            margin-top: 8vh;
-        }
-
-   .data-change-buttons  {
-    position: relative;
+   
+/*.data-change-buttons  {
     left: 70%;
     top: -1%; 
     bottom: -4%;
+   
     z-index: 2;
+} */
+
+button:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+.deaths {
+    background-color: rgb(11, 59, 53);
+    border-style: ridge;
+    border-color: rgb(18, 141, 127);
+    border-width: thick;
+    color: rgba(236,236,241,1);
+    border-radius: 8px;
 }
+
+.deaths:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+
+.infected {
+    background-color: rgb(11, 59, 53);
+    border-style: ridge;
+    border-color: rgb(18, 141, 127);
+    border-width: thick;
+    color: rgba(236,236,241,1);
+    border-radius: 8px;
+}
+
+.infected:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+.recovered {
+    background-color:  rgb(11, 59, 53);
+    border-style: ridge;
+    border-color: rgb(18, 141, 127);
+    border-width: thick;
+    color: rgba(236,236,241,1);
+    border-radius: 8px;
+}
+
+.recovered:hover {
+    background-color: #4CAF50;
+    color: white;
+  }
  
+  .coronavirus-icon {
+    position: relative;
+    left: 55%;
+    top: -17%;
+    width: 683px;
+    height: 683;
+    background-image: url('bakterien.svg');
+    opacity: 0.3;
+    z-index: -1;
+}
 
 
 

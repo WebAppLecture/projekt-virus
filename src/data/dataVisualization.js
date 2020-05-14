@@ -6,7 +6,7 @@ export class Data{
         //.then(data => this.clearChart(data))
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
-        .then(data => this.topTenCountriesDeaths(data))
+        .then(data => this.filterTopTenCountries(data))
         .then((data, type = "DEATHS") => this.visualData(data, type))
         //.catch(error => this.error())
     }
@@ -16,9 +16,9 @@ export class Data{
        //.then(data => this.clearChart(data))
        .then(data => this.sortDatabyCountryNames(data)) 
        .then(data => this.cleanData(data))
-       .then(data => this.topTenCountriesDeaths(data))
+       .then(data => this.filterTopTenCountries(data))
        .then((data, type = "INFECTED") => this.visualData(data, type))
-       //.catch(error => this.error())
+       .catch(error => this.error())
    }
 
     recoveredCoivd19Data() {
@@ -26,11 +26,10 @@ export class Data{
         //.then(data => this.clearChart(data))
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
-        .then(data => this.topTenCountriesDeaths(data))
+        .then(data => this.filterTopTenCountries(data))
         .then((data, type = "RECOVERED") => this.visualData(data, type))
-        //.catch(error => this.error())
+        .catch(error => this.error())
     }
-
 
     error() {
       console.log("Had an error loading file.")
@@ -78,7 +77,7 @@ export class Data{
     }
 
     //extract top ten countries with highest number of deaths
-    topTenCountriesDeaths(data) { 
+    filterTopTenCountries(data) { 
       let header = data['columns'].map(header => header);
       let lastEntryInHeaders = (header[header.length - 1])
     
@@ -105,7 +104,6 @@ export class Data{
 
       d3.selectAll("svg")
       .selectAll("g")
-      //.selectAll("text")
       .remove();
 
       
@@ -224,7 +222,7 @@ export class Data{
           //add text of total numbers for onMouseOver-Event
           chart.append("text")
             .attr('class', 'val') 
-            .attr('x', x => xScale(data[i]['Country/Region']) + (xScale.bandwidth() + 5) / 2)
+            .attr('x', x => xScale(data[i]['Country/Region']) + (xScale.bandwidth() + 6) / 2)
             .attr("text-anchor", "middle")
             .attr('y', y => yScale(data[i][formattedDate]) + 23 )
             .text([data[i][formattedDate].toString()]); // value of text in bar -> total Numbers for country
@@ -246,6 +244,5 @@ export class Data{
       }
     return data; 
     } 
-    
   }
 
