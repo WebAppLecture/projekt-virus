@@ -1,18 +1,30 @@
 * {
     box-sizing: border-box;
-  }
-
-[class*="col-"] {
-    float: left;
-    padding: 15px;
 }
 
-.col-1 {width: 12.5%;
-    border: 1px solid red;}
-.col-2 {width: 50%;
-    border: 1px solid red;}
-.col-3 {width: 35%;
-    border: 1px solid red;}
+body {
+    background: linear-gradient( rgb(149,149,154) 0%, rgb(236,236,241) 45%, rgb(124, 177, 177) 100%);
+    overflow-x: hidden;
+}
+
+main {
+    position: absolute;
+    left: 50%;
+    width: min(100%, 1000px);
+    transform: translateX(-50%);
+    border: 1px solid red;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+}
+
+.button-container {
+    position: absolute;
+    padding: .4em;
+    right: 0;
+}
 
 h1 {
     font-family: 'Trocchi';
@@ -25,12 +37,8 @@ h1 {
     border: medium dotted;
 }
 
-body{
-background: linear-gradient( rgb(149,149,154) 0%, rgb(236,236,241) 45%, rgb(124, 177, 177) 100%);
-}
-
 .barchart {
-    width: 1000px;
+    width: 100%;
     height: 600px;
     /*
     left: 15%;
@@ -39,35 +47,35 @@ background: linear-gradient( rgb(149,149,154) 0%, rgb(236,236,241) 45%, rgb(124,
     fill: teal;
 }
 
-    .title {
-        fill:black;
-        font-size: 15pt;
-    }
-    
-    .grid line {
-        stroke: rgba(28, 35, 39, 0.74);
-        stroke-opacity: 0.3;
-        pointer-events: none;
-    }
+.title {
+    fill:black;
+    font-size: 15pt;
+}
 
-    .axisLabel {
-        fill: black;
-    }
+.grid line {
+    stroke: rgba(28, 35, 39, 0.74);
+    stroke-opacity: 0.3;
+    pointer-events: none;
+}
 
-    .highlight {
-        fill: rgb(92, 13, 68); 
-    }
+.axisLabel {
+    fill: black;
+}
 
-    .val {
-        fill: white;
-        pointer-events: none;
-        text-align: center;
-    }
+.highlight {
+    fill: rgb(92, 13, 68); 
+}
 
-    .date {
-        fill: black;
-        font-size: 8pt;
-    }
+.val {
+    fill: white;
+    pointer-events: none;
+    text-align: center;
+}
+
+.date {
+    fill: black;
+    font-size: 8pt;
+}
 
    
 /*.data-change-buttons  {
@@ -136,7 +144,6 @@ button:focus {
     opacity: 0.3;
     z-index: -1;
 }
-
 
 
     

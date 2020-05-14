@@ -8,22 +8,24 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
     </head>
     <body>
-        <div class="header">
+        <header>
             <h1>Dashboard Covid19</h1>
-        </div>
+        </header>
+        <main>
+            <div class="button-container">
+                <button class="deaths" onclick="document.getElementById(barChart)">Deaths</button>
+                <button class="infected" onclick="document.getElementById(barChart)">Infected</button>
+                <button class="recovered" onclick="document.getElementById(barChart)">Recovered</button>
+            </div>
 
-        <div class="col-1"></div>
-        <diV class="col-2">
             <svg class="barChart"></svg>
-        </diV>
 
-        <div class="col-3">
-            <button class="deaths" onclick="document.getElementById(barChart)">Deaths</button>
-            <button class="infected" onclick="document.getElementById(barChart)">Infected</button>
-            <button class="recovered" onclick="document.getElementById(barChart)">Recovered</button>
-        </div>
-        
+
+            
+        </main>
         <div class="coronavirus-icon"> </div>
-        <div>Icons erstellt von <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+        <footer>
+            Icons erstellt von <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a>
+        </footer>
     </body>
 </html>
