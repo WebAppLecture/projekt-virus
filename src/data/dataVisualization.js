@@ -135,7 +135,6 @@ export class Data{
       chart.append('text')
         .attr('class', 'title')
         .attr('y', -35) 
-        .attr('x', -35)
         .text("Top ten most affected countries - " + datatype);
 
       //create y-axe
@@ -203,7 +202,7 @@ export class Data{
 
       chart.append('text')
         .attr('class', 'date')
-        .attr('x', 800)
+        .attr('x', 790)
         .attr('y', 510)
         .text("Database updated: " + formattedDate);
 
@@ -238,7 +237,6 @@ export class Data{
         .attr("text-anchor", "middle")
         .attr("y", y => yScale(data[i][formattedDate]))
         .attr("height", h => height - yScale(data[i][formattedDate]));
-
       d3.selectAll('.val')
         .remove()
       }
