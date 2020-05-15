@@ -4,6 +4,7 @@
 
 body {
     background: linear-gradient( rgb(149,149,154) 0%, rgb(236,236,241) 45%, rgb(124, 177, 177) 100%);
+    z-index: -2;
     overflow-x: hidden;
 }
 
@@ -31,7 +32,6 @@ h1 {
     height: 600px;
     border: thin dotted rgb(141, 139, 139);
     fill: teal;
-    transition: ;
 }
 
 .title {
@@ -51,7 +51,7 @@ h1 {
 
 .highlight {
     fill: rgb(65, 9, 65);
-    transition: all 0.7s linear;
+    transition: all 0.5s linear;
 }
 
 .val {
@@ -59,21 +59,96 @@ h1 {
     pointer-events: none;
     text-align: center;
 }
- 
-.coronavirus-icon {
-    position: relative;
-    left: 55%;
-    top: -17%;
-    width: 683px;
-    height: 683;
-    background-image: url('bakterien.svg');
-    opacity: 0.3;
-    z-index: -1;
+
+.icon {
+    overflow: hidden;
+    position: absolute;
+    width: 70vh;
+    height: 65vh;
+    right: 0;
+    top: 0;
+    z-index: -1;   
 }
+
+.coronavirus-circle{
+    position: relative;
+    left: 20vh;
+    height: 50vh;
+    z-index: -2;
+    background: 
+    radial-gradient(50vh 50vh at 50% 40%, rgb(159, 189, 185) 10%,rgb(29, 145, 135) 45%, rgb(22, 116, 108)  50%, transparent 51%);
+}
+
+.coronavirus-arms-back,
+.coronavirus-arms-back::after {
+    position: relative;
+    left: 7vh;
+    top: -40vh;
+    width: 90vh;
+    height: 17vh;
+    z-index: -4;
+    background:
+    radial-gradient(10vh 10vh, ivory 0%, rgb(29, 145, 135) 50%, transparent 51% ) 6vh 2vh / 10vh 10vh no-repeat,
+    radial-gradient(10vh 10vh, ivory 0%, rgb(29, 145, 135) 50%, transparent 51% ) 76vh 2.5vh / 10vh 10vh no-repeat,
+    radial-gradient(80vh 9vh at 50% 0, transparent 50%, rgb(29, 145, 135) 52%, ivory) 8vh 1.5vh / 70vh 6vh no-repeat,
+    radial-gradient(80vh 9vh at 50% 100%, transparent 50%, rgb(29, 145, 135) 52%, ivory) 8vh 7.3vh / 70vh 6vh no-repeat;
+    transform: rotate(22deg);
+    font-size: 200px;
+}
+
+.coronavirus-arms-back::after {
+    display: block;
+    left: 2%;
+    top: -0%;
+    content: "";
+    transform: rotate(65deg);
+}
+
+.coronavirus-arms-front,
+.coronavirus-arms-front::after {
+    position: relative;
+    left: -26vh;
+    top: -13vh;
+    width: 80vh;
+    height: 13vh;
+    z-index: -1;
+    background:
+    radial-gradient(8vh 8vh, ivory 0%, rgb(29, 145, 135) 50%, transparent 50% ) 4vh 2.5vh / 10vh 10vh no-repeat,    
+    radial-gradient(150vh 8vh at 50% 0, transparent 50%, rgb(29, 145, 135) 52%, ivory) 1vh 1.5vh / 11vh 6vh no-repeat,
+    radial-gradient(150vh 8vh at 50% 100%, transparent 50%, rgb(29, 145, 135) 52%, ivory) 1vh 7.3vh / 10vh 6vh no-repeat;    
+    transform:rotate(133deg);
+    font-size: 400px;
+}
+
+.coronavirus-holes {
+    position: relative;
+    left: 31vh;
+    top: -55.5vh;
+    width: 15vh;
+    height: 15vh;
+    z-index: -2;
+    background:
+    radial-gradient(6vh 8vh, rgb(4, 41, 32) 0%, rgb(15, 155, 136) 50%, transparent 50% ) 4vh 2.5vh / 10vh 10vh no-repeat;
+    transform:rotate(-30deg);
+}
+
+.coronavirus-holes2 {
+    position: relative;
+    left: 31.4vh;
+    top: -70.0vh;
+    width: 15vh;
+    height: 15vh;
+    z-index: 1;
+    background:
+    radial-gradient(1vh 3.1vh, rgb(8, 80, 62) 50%, transparent 100% ) 4vh 2.5vh / 10vh 10vh no-repeat;
+    transform:rotate(-50deg);
+}
+
 
 .button-container {
     position: absolute;
     padding: 27px;
+    width:320;
     right: 0;
 }
 
@@ -108,8 +183,10 @@ button:focus {
 }
 
 footer {
+    position: absolute;
     width: 100%;
     text-align: center;
+    bottom: 15;
 }
 
     
