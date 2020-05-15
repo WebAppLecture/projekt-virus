@@ -1,27 +1,29 @@
 <html>
     <head>
-        
         <link rel="stylesheet" href="src/css/main.css">
-    </head>
-    <body>
         <script type="module" src="src/js/index.js"></script>
         <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
-       
-
-        <h1>
-            Dashboard Covid19
-        </h1>
-        
-        <nav class="data-change-buttons">
-
-            <button class="deaths" onclick="document.getElementById(barChart)">Deaths</button>
-            <button class="infected" onclick="document.getElementById(barChart)">Infected</button>
-            <button class="recovered" onclick="document.getElementById(barChart)">Recovered</button>
-            
-        </nav>
-        <svg id="barChart"  ></svg>
-        <div class="coronavirus-icon"> </div>
-        <div>Icons erstellt von <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+    </head>
+    <body>
+        <h1>Dashboard Covid19</h1>
+        <main>
+            <div class="button-container">
+                <button class="deaths" onclick="document.getElementById(barChart)">Deaths</button>
+                <button class="infected" onclick="document.getElementById(barChart)">Infected</button>
+                <button class="recovered" onclick="document.getElementById(barChart)">Recovered</button>
+            </div>
+            <svg class="barChart" id="barChart"></svg> 
+        </main>
+        <div class="icon">
+            <div class="coronavirus-circle"></div>
+            <div class="coronavirus-arms-back"></div>
+            <div class="coronavirus-arms-front"></div>
+            <div class="coronavirus-bulge"></div>
+            <div class="coronavirus-bulge2"></div>
+        </div>
+        <footer>
+            Icons erstellt von <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a>
+        </footer>
     </body>
 </html>

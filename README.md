@@ -6,14 +6,10 @@ Leitung: Dr. Friedrich Wünsch, Louis Ritzkowski
 
 # Projektname #
 
-Manuel Mustermann, Marta Musterfrau, Mo Mustermensch
+Projekt: VIRUS
+von: Nadine Donié
 
 ### Beschreibung ###
 
-### Umsetzung ###
+Ziel des Prjekts war es, einen interaktiven BarChart auf Grundlage von HTML, CSS & Javascript zu erstellen. Dabei wurde der Datenkorpus der Hopkins University verwendet, welcher auf GitHub zur weiteren Verwendung zur Verfügung gestellt wird (https://github.com/CSSEGISandData/COVID-19).
 
-### Steuerung (Falls Spiel) ###
-
-### Wichtige Klassen/Dateien ###
-
-### Designentscheidungen ###

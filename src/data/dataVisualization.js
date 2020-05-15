@@ -1,43 +1,39 @@
 export class Data{
 
-  //get csv data
+    //get csv data
     deathsGlobalCovid19Data() {
         d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
-        //.then(data => this.clearChart(data))
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
-        .then(data => this.topTenCountriesDeaths(data))
+        .then(data => this.filterTopTenCountries(data))
         .then((data, type = "DEATHS") => this.visualData(data, type))
-        //.catch(error => this.error())
+        .catch(error => this.error())
     }
 
     infectedGlobalCovid19Data() {
        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
-       //.then(data => this.clearChart(data))
        .then(data => this.sortDatabyCountryNames(data)) 
        .then(data => this.cleanData(data))
-       .then(data => this.topTenCountriesDeaths(data))
+       .then(data => this.filterTopTenCountries(data))
        .then((data, type = "INFECTED") => this.visualData(data, type))
-       //.catch(error => this.error())
+       .catch(error => this.error())
    }
 
     recoveredCoivd19Data() {
-        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv") 
-        //.then(data => this.clearChart(data))
+        d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv")
         .then(data => this.sortDatabyCountryNames(data)) 
         .then(data => this.cleanData(data))
-        .then(data => this.topTenCountriesDeaths(data))
+        .then(data => this.filterTopTenCountries(data))
         .then((data, type = "RECOVERED") => this.visualData(data, type))
-        //.catch(error => this.error())
+        .catch(error => this.error())
     }
-
 
     error() {
       console.log("Had an error loading file.")
     }
 
     //arrange data alphabetically
-    sortDatabyCountryNames(data) { //data is now whole data set (->then!)
+    sortDatabyCountryNames(data) { 
         return data.sort(this.compareCountries);
     }
 
@@ -56,7 +52,6 @@ export class Data{
 
     
     //some countries are listed multiple times -> aggregate total numbers
-    //keep in mind: just last column is aggregated!
     cleanData(data) {
       let header = data['columns'].map(header => header);
       let lastEntryInHeaders = (header[header.length - 1])
@@ -77,12 +72,12 @@ export class Data{
         return data;
     }
 
-    //extract top ten countries with highest number of deaths
-    topTenCountriesDeaths(data) { 
+    //extract top ten countries with highest numbers
+    filterTopTenCountries(data) { 
       let header = data['columns'].map(header => header);
       let lastEntryInHeaders = (header[header.length - 1])
     
-      //sort data in descending order of number of deaths
+      //sort data in descending order by total numbers
       let countriesSortedByTotalNumbers = data.sort(compareTotal);
         function compareTotal(a, b) {
           let country1 = a[lastEntryInHeaders]; 
@@ -100,16 +95,15 @@ export class Data{
     }  
     
 
-    //Guided by https://blog.risingstack.com/d3-js-tutorial-bar-charts-with-javascript/ 
+    //Following guided by https://blog.risingstack.com/d3-js-tutorial-bar-charts-with-javascript/ 
     visualData(data, datatype) {
-
+      //remove existent svg-element
       d3.selectAll("svg")
       .selectAll("g")
-      //.selectAll("text")
       .remove();
-
       
-      //create date-variable; necessary because column variable is not included anymore
+      //create date-variable
+      // necessary because column variable is not included anymore
       const today = new Date()
       const yesterday = new Date(today)
       yesterday.setDate(yesterday.getDate() - 1)
@@ -137,23 +131,21 @@ export class Data{
       chart.append('text')
         .attr('class', 'title')
         .attr('y', -35) 
-        .attr('x', -35)
         .text("Top ten most affected countries - " + datatype);
 
       //create y-axe
-      const yScale = d3.scaleLinear() //scalingfunction splits height in equal parts
-        .range([height, 0]) //.range takes the length
-        .domain([0, data[0][formattedDate] + 11000]); //.domain takes the range --> length will be divided between limits of range
+      const yScale = d3.scaleLinear() 
+        .range([height, 0]) 
+        .domain([0, data[0][formattedDate] + 11000]); 
   
         chart.append('g')
         .attr('class', 'axes')
-        .call(d3.axisLeft(yScale)); //d3.axisLeft creates left vertical axis
+        .call(d3.axisLeft(yScale)); 
   
       //create x-axe
       const xScale = d3.scaleBand()
         .range([0, width])
-        .domain(countrynames) //why is not possible to define countrynames in .domain() with map()Function?
-        //.domain -> we take an intervall (called domain by d3.js) and transform it to a new intervall (call range by d3.js)
+        .domain(countrynames) 
         .padding(0.2)
   
       chart.append('g')
@@ -176,15 +168,15 @@ export class Data{
         .text("Total " + datatype[0] + datatype.substring(1,datatype.length).toLowerCase());      
 
       //create rectangles 
-      chart.selectAll() //select all element on the chart with empty result set
-        .data(data) //.data defines how many DOM elements. Defines through array-length
-        .enter() //identifies elements that are missing if input is longer than selection
-        .append('rect') //append a rectangle for every member of the array
-        .attr('x', (d,i) => xScale(data[i]['Country/Region']) ) //done
-        .attr('y', (d,i) => yScale(data[i][formattedDate])) //done
-        .attr('width', xScale.bandwidth())//(width / data.length) /2)
+      chart.selectAll() 
+        .data(data) 
+        .enter() 
+        .append('rect') 
+        .attr('x', (d,i) => xScale(data[i]['Country/Region']) ) 
+        .attr('y', (d,i) => yScale(data[i][formattedDate])) 
+        .attr('width', xScale.bandwidth())
         .attr('height', (d, i) =>  height - yScale(data[i][formattedDate]))
-        .on("mouseover", onMouseOver) //Add listener for the mouse event
+        .on("mouseover", onMouseOver)
         .on("mouseout", onMouseOut) 
 
       //create grid system
@@ -203,14 +195,15 @@ export class Data{
         .tickSize(-width, 0, 0)
         .tickFormat(''))
 
+      //add Date
       chart.append('text')
         .attr('class', 'date')
-        .attr('x', 800)
+        .attr('x', 790)
         .attr('y', 510)
         .text("Database updated: " + formattedDate);
 
-      //mouseout event handler function
-      //color bar for onMouseOver-Event
+      //Add event handler
+      //highlight and resize bar for onMouseOver-Event
       function onMouseOver(d, i) {
         data[i]['Country/Region'].toString().length
         d3.select(this).attr('class', 'highlight');
@@ -221,10 +214,10 @@ export class Data{
           .attr("y", y => yScale(data[i][formattedDate]))
           .attr("height", h => height - yScale(data[i][formattedDate] + 10 ))
 
-          //add text of total numbers for onMouseOver-Event
+          //add text of total numbers for onMouse-Event
           chart.append("text")
             .attr('class', 'val') 
-            .attr('x', x => xScale(data[i]['Country/Region']) + (xScale.bandwidth() + 5) / 2)
+            .attr('x', x => xScale(data[i]['Country/Region']) + (xScale.bandwidth() + 6) / 2)
             .attr("text-anchor", "middle")
             .attr('y', y => yScale(data[i][formattedDate]) + 23 )
             .text([data[i][formattedDate].toString()]); // value of text in bar -> total Numbers for country
@@ -240,12 +233,10 @@ export class Data{
         .attr("text-anchor", "middle")
         .attr("y", y => yScale(data[i][formattedDate]))
         .attr("height", h => height - yScale(data[i][formattedDate]));
-
       d3.selectAll('.val')
         .remove()
       }
     return data; 
     } 
-    
   }
 
